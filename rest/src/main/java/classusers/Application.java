@@ -17,13 +17,13 @@ public class Application {
 
 	@Bean
 	CommandLineRunner init(UserRepository userRepository,
-						   BookmarkRepository bookmarkRepository) {
+						   EClassRepository eclassRepository) {
 		return args ->
 			Arrays.asList("jhoeller","dsyer","pwebb","ogierke","rwinch","mfisher","mpollack","jlong")
 				.forEach(lastname -> {
-					User user = userRepository.save(new User("Tom", lastname, "email@example.com"));
-					bookmarkRepository.save(new Bookmark(user, "http://bookmark.com/1/" + lastname, "A description"));
-					bookmarkRepository.save(new Bookmark(user, "http://bookmark.com/2/" + lastname, "A description"));
+					User creator = userRepository.save(new User("Tom", lastname, "email@example.com"));
+					eclassRepository.save(new EClass(creator, "A Class by "+lastname));
+					eclassRepository.save(new EClass(creator, "B Class by "+lastname));
 				});
 	}
 

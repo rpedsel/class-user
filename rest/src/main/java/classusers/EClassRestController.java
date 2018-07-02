@@ -33,55 +33,56 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 // tag::code[]
 @RestController
-@RequestMapping("/bookmarks/{userId}")
-class BookmarkRestController {
+@RequestMapping
+class EClassRestController {
 
-	private final BookmarkRepository bookmarkRepository;
+	private final EClassRepository eclassRepository;
 	private final UserRepository userRepository;
 
 	@Autowired
-	BookmarkRestController(BookmarkRepository bookmarkRepository,
+	EClassRestController(EClassRepository eclassRepository,
 						   UserRepository userRepository) {
-		this.bookmarkRepository = bookmarkRepository;
+		this.eclassRepository = eclassRepository;
 		this.userRepository = userRepository;
 	}
 
-	@GetMapping
-	Collection<Bookmark> readBookmarks(@PathVariable String userId) {
+	//************ not lastname?? or use id?? *************//
+	@GetMapping("/user/{userId}/creator")
+	Collection<EClass> readEClasses(@PathVariable String userId) {
 		this.validateUser(userId);
 
-		return this.bookmarkRepository.findByUserLastname(userId);
+		return this.eclassRepository.findByCreatorLastname(userId);
 	}
 
-	@PostMapping
-	ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {
-		this.validateUser(userId);
+	// @PostMapping
+	// ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {
+	// 	this.validateUser(userId);
 
-		return this.userRepository
-				.findByLastname(userId)
-				.map(user -> {
-					Bookmark result = this.bookmarkRepository.save(new Bookmark(user,
-							input.getUri(), input.getDescription()));
+	// 	return this.userRepository
+	// 			.findByLastname(userId)
+	// 			.map(user -> {
+	// 				Bookmark result = this.bookmarkRepository.save(new Bookmark(user,
+	// 						input.getUri(), input.getDescription()));
 
-					URI location = ServletUriComponentsBuilder
-						.fromCurrentRequest()
-						.path("/{id}")
-						.buildAndExpand(result.getId())
-						.toUri();
+	// 				URI location = ServletUriComponentsBuilder
+	// 					.fromCurrentRequest()
+	// 					.path("/{id}")
+	// 					.buildAndExpand(result.getId())
+	// 					.toUri();
 
-					return ResponseEntity.created(location).build();
-				})
-				.orElse(ResponseEntity.noContent().build());
-	}
+	// 				return ResponseEntity.created(location).build();
+	// 			})
+	// 			.orElse(ResponseEntity.noContent().build());
+	// }
 
-	@GetMapping("/{bookmarkId}")
-	Bookmark readBookmark(@PathVariable String userId, @PathVariable Long bookmarkId) {
-		this.validateUser(userId);
+	// @GetMapping("/{bookmarkId}")
+	// Bookmark readBookmark(@PathVariable String userId, @PathVariable Long bookmarkId) {
+	// 	this.validateUser(userId);
 		
-		return this.bookmarkRepository
-			.findById(bookmarkId)
-			.orElseThrow(() -> new BookmarkNotFoundException(bookmarkId));
-	}
+	// 	return this.bookmarkRepository
+	// 		.findById(bookmarkId)
+	// 		.orElseThrow(() -> new BookmarkNotFoundException(bookmarkId));
+	// }
 
 	/**
 	 * Verify the {@literal userId} exists.

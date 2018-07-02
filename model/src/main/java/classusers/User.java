@@ -27,8 +27,8 @@ public class User {
     //private String password;
 
     //******* set to list? *******//
-    @OneToMany(mappedBy = "user")
-    private Set<Bookmark> bookmarks = new HashSet<>();
+    @OneToMany(mappedBy = "creator")
+    private Set<EClass> eclasses = new HashSet<>();
 
     private User() { } // JPA only
 
@@ -54,7 +54,7 @@ public class User {
         return email;
     }
 
-    public Set<Bookmark> getBookmarks() {
-        return bookmarks;
+    public Set<EClass> getEClasses() {
+        return eclasses;
     }
 }

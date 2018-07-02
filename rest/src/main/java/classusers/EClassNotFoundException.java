@@ -18,9 +18,9 @@ package classusers;
 /**
  * @author Greg Turnquist
  */
-class BookmarkNotFoundException extends RuntimeException {
+class EClassNotFoundException extends RuntimeException {
 
-	public BookmarkNotFoundException(Long bookmarkId) {
-		super("could not find bookmark '" + bookmarkId + "'.");
+	public EClassNotFoundException(Long eclassId) {
+		super("could not find eclass '" + eclassId + "'.");
 	}
 }
