@@ -28,7 +28,7 @@ public class EClass {
     @ManyToOne
     private User creator;
 
-    //@JsonView(View.Student.class)
+    @JsonView(View.Student.class)
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> students = new HashSet<>();
 

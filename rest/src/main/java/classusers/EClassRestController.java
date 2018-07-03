@@ -52,7 +52,7 @@ class EClassRestController {
 	//************ not lastname?? or use id?? *************//
 	@JsonView(View.General.class)
 	@GetMapping("/user/{userId}/creator")
-	Collection<EClass> readEClassCreator(@PathVariable String userId) {
+	Collection<EClass> readCreatorEClass(@PathVariable String userId) {
 		this.validateUser(userId);
 
 		return this.eclassRepository.findByCreatorLastname(userId);
@@ -60,19 +60,20 @@ class EClassRestController {
 
 	@JsonView(View.Student.class)
 	@GetMapping("/user/{userId}/student")
-	Collection<EClass> readEClassStudent(@PathVariable String userId) {
+	Collection<EClass> readStudentEClass(@PathVariable String userId) {
 		this.validateUser(userId);
 
 		//return this.userRepository.findStudiedclassesByLastname(userId).getStudiedclasses();
 		return this.userRepository.findByLastname(userId).get().getStudiedclasses();
 	}
+	
+	@JsonView(View.Student.class)
+	@GetMapping("/class/{classname}/students")
+	Collection<User> readEClassStudent(@PathVariable String classname) {
+		this.validateEClass(classname);
 
-	// @GetMapping("/class/{classname}/students")
-	// Collection<User> readEClassStudent(@PathVariable String classname) {
-	// 	this.validateEClass(classname);
-
-	// 	return this.eclassRepository.findStudentsByClassname(classname);
-	// }
+		return this.eclassRepository.findByClassname(classname).get().getStudents();
+	}
 
 	// @PostMapping
 	// ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {

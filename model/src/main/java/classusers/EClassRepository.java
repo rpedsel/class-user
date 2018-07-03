@@ -8,5 +8,5 @@ import java.util.Collection;
 public interface EClassRepository extends JpaRepository<EClass, Long> {
     Optional<EClass> findByClassname(String classname);
     Collection<EClass> findByCreatorLastname(String lastname);
-    Collection<User> findStudentsByClassname(String classname);
+    //Collection<User> findStudentsByClassname(String classname);
 }

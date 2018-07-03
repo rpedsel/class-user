@@ -31,10 +31,10 @@ public class Application {
 					creator.getStudiedclasses().add(newclass);
 					eclassRepository.save(newclass);
 
-					Collection<User> testclass = userRepository.findStudiedclassesByLastname(lastname);
-					out.println("********************************************************");
-					out.println(testclass.iterator().next());
-					out.println("********************************************************");
+					// Collection<User> testclass = userRepository.findStudiedclassesByLastname(lastname);
+					// out.println("********************************************************");
+					// out.println(testclass.iterator().next());
+					// out.println("********************************************************");
 					// Optional<EClass> testclass = eclassRepository.findByClassname(newclass.getClassname());
 					// out.println("********************************************************");
 					// out.println(newclass.getStudents().iterator().next().getLastname());

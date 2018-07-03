@@ -38,7 +38,7 @@ public class User {
     private Set<EClass> eclasses = new HashSet<>();
 
     //@JsonIgnore
-    @JsonView(View.General.class)
+    //@JsonView(View.General.class)
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "students")
     private Set<EClass> studiedclasses = new HashSet<>();
 
