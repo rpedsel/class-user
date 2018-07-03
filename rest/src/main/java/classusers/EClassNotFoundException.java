@@ -20,7 +20,10 @@ package classusers;
  */
 class EClassNotFoundException extends RuntimeException {
 
-	public EClassNotFoundException(Long eclassId) {
-		super("could not find eclass '" + eclassId + "'.");
+	// public EClassNotFoundException(Long eclassId) {
+	// 	super("could not find eclass '" + eclassId + "'.");
+	// }
+	public EClassNotFoundException(String classname) {
+		super("could not find eclass '" + classname + "'.");
 	}
 }

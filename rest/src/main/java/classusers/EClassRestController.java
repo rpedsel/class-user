@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+
 /**
  * @author Josh Long
  */
@@ -47,12 +50,29 @@ class EClassRestController {
 	}
 
 	//************ not lastname?? or use id?? *************//
+	@JsonView(View.General.class)
 	@GetMapping("/user/{userId}/creator")
-	Collection<EClass> readEClasses(@PathVariable String userId) {
+	Collection<EClass> readEClassCreator(@PathVariable String userId) {
 		this.validateUser(userId);
 
 		return this.eclassRepository.findByCreatorLastname(userId);
 	}
+
+	@JsonView(View.Student.class)
+	@GetMapping("/user/{userId}/student")
+	Collection<EClass> readEClassStudent(@PathVariable String userId) {
+		this.validateUser(userId);
+
+		//return this.userRepository.findStudiedclassesByLastname(userId).getStudiedclasses();
+		return this.userRepository.findByLastname(userId).get().getStudiedclasses();
+	}
+
+	// @GetMapping("/class/{classname}/students")
+	// Collection<User> readEClassStudent(@PathVariable String classname) {
+	// 	this.validateEClass(classname);
+
+	// 	return this.eclassRepository.findStudentsByClassname(classname);
+	// }
 
 	// @PostMapping
 	// ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {
@@ -93,6 +113,12 @@ class EClassRestController {
 		this.userRepository
 			.findByLastname(userId)
 			.orElseThrow(() -> new UserNotFoundException(userId));
+	}
+
+	private void validateEClass(String classname) {
+		this.eclassRepository
+			.findByClassname(classname)
+			.orElseThrow(() -> new EClassNotFoundException(classname));
 	}
 }
 // end::code[]
