@@ -91,11 +91,11 @@ public class User {
     }
 
     public Set<EClass> getStudiedclasses() {
-        return eclasses;
+        return studiedclasses;
     }
 
-    public void setStudiedclasses(Set<EClass> eclasses) {
-        this.eclasses = eclasses;
+    public void setStudiedclasses(Set<EClass> studiedclasses) {
+        this.studiedclasses = studiedclasses;
     }
 
 }
