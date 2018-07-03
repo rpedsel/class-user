@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonView;
+//import com.fasterxml.jackson.databind.node.TextNode;
 
 
 /**
@@ -66,13 +67,34 @@ class EClassRestController {
 		//return this.userRepository.findStudiedclassesByLastname(userId).getStudiedclasses();
 		return this.userRepository.findByLastname(userId).get().getStudiedclasses();
 	}
-	
+
 	@JsonView(View.Student.class)
 	@GetMapping("/class/{classname}/students")
 	Collection<User> readEClassStudent(@PathVariable String classname) {
 		this.validateEClass(classname);
 
 		return this.eclassRepository.findByClassname(classname).get().getStudents();
+	}
+
+	@PostMapping("/class/{classId}/rename")
+	ResponseEntity<?> renameClass(@PathVariable Long classId, @RequestBody EClass input) {
+		this.validateEClassId(classId);
+
+		return this.eclassRepository
+				.findById(classId)
+				.map(eclass -> {
+					eclass.setClassname(input.getClassname());
+					EClass result = this.eclassRepository.save(eclass);
+
+					URI location = ServletUriComponentsBuilder
+						.fromCurrentRequest()
+						.path("/{id}")
+						.buildAndExpand(result.getId())
+						.toUri();
+
+					return ResponseEntity.ok().build();
+				})
+				.orElse(ResponseEntity.noContent().build());
 	}
 
 	// @PostMapping
@@ -120,6 +142,12 @@ class EClassRestController {
 		this.eclassRepository
 			.findByClassname(classname)
 			.orElseThrow(() -> new EClassNotFoundException(classname));
+	}
+
+	private void validateEClassId(Long classId) {
+		this.eclassRepository
+			.findById(classId)
+			.orElseThrow(() -> new EClassIdNotFoundException(classId));
 	}
 }
 // end::code[]
