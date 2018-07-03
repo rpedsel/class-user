@@ -39,7 +39,7 @@ public class User {
 
     //@JsonIgnore
     //@JsonView(View.General.class)
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "students")
+    @ManyToMany(cascade=CascadeType.MERGE, mappedBy = "students")
     private Set<EClass> studiedclasses = new HashSet<>();
 
     private User() { } // JPA only
@@ -70,7 +70,7 @@ public class User {
         return lastname;
     }
 
-    public void setLastname(String Lastname) {
+    public void setLastname(String lastname) {
         this.lastname = lastname;
     }
 

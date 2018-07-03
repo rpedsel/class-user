@@ -29,7 +29,7 @@ public class EClass {
     private User creator;
 
     @JsonView(View.Student.class)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade=CascadeType.MERGE)
     private Set<User> students = new HashSet<>();
 
     //private String description;

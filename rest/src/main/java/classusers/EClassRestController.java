@@ -17,6 +17,7 @@ package classusers;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -86,11 +87,73 @@ class EClassRestController {
 					eclass.setClassname(input.getClassname());
 					EClass result = this.eclassRepository.save(eclass);
 
-					URI location = ServletUriComponentsBuilder
-						.fromCurrentRequest()
-						.path("/{id}")
-						.buildAndExpand(result.getId())
-						.toUri();
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentRequest()
+					// 	.path("/{id}")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
+
+					return ResponseEntity.ok().build();
+				})
+				.orElse(ResponseEntity.noContent().build());
+	}
+
+	@PostMapping("/class/{classId}/addstudent")
+	ResponseEntity<?> renameClass(@PathVariable Long classId, @RequestBody User input) {
+		this.validateEClassId(classId);
+		this.validateUserId(input.getId());
+		
+		return this.eclassRepository
+				.findById(classId)
+				.map(eclass -> {
+					User student = this.userRepository.findById(input.getId()).get();
+					//EClass updatedclass = eclass;
+					Set<User> newstudents = eclass.getStudents();
+					Set<EClass> newclasses = student.getStudiedclasses();
+					newstudents.add(student);
+					newclasses.add(eclass);
+					eclass.setStudents(newstudents);
+					student.setStudiedclasses(newclasses);
+					//student.getStudiedclasses().add(updatedclass);
+					this.eclassRepository.save(eclass);
+					this.userRepository.save(student);
+
+					// User student = this.userRepository.findById(input.getId()).get();
+					// this.userRepository.save(student);
+					// eclass.getStudents().add(student);
+					// student.getStudiedclasses().add(eclass);
+					// //EClass result = this.eclassRepository.save(eclass);
+					// //this.userRepository.save(student);
+					// this.eclassRepository.save(eclass);
+
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentRequest()
+					// 	.path("/{id}")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
+
+					return ResponseEntity.ok().build();
+				})
+				.orElse(ResponseEntity.noContent().build());
+	}
+
+	@PostMapping("/user/{userId}/update")
+	ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User input) {
+		this.validateUserId(userId);
+
+		return this.userRepository
+				.findById(userId)
+				.map(user -> {
+					user.setFirstname(input.getFirstname());
+					user.setLastname(input.getLastname());
+					user.setEmail(input.getEmail());
+					User result = this.userRepository.save(user);
+
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentRequest()
+					// 	.path("/{id}")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
 
 					return ResponseEntity.ok().build();
 				})
@@ -148,6 +211,12 @@ class EClassRestController {
 		this.eclassRepository
 			.findById(classId)
 			.orElseThrow(() -> new EClassIdNotFoundException(classId));
+	}
+
+	private void validateUserId(Long userId) {
+		this.userRepository
+			.findById(userId)
+			.orElseThrow(() -> new UserIdNotFoundException(userId));
 	}
 }
 // end::code[]
