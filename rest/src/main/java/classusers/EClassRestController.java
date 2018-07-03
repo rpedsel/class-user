@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +53,12 @@ class EClassRestController {
 	}
 
 	//************ not lastname?? or use id?? *************//
+	@JsonView(View.General.class)
+	@GetMapping("/user/all")
+	Collection<User> readUserAll() {
+		return this.userRepository.findAll();
+	}
+
 	@JsonView(View.General.class)
 	@GetMapping("/user/{userId}/creator")
 	Collection<EClass> readCreatorEClass(@PathVariable String userId) {
@@ -181,14 +188,12 @@ class EClassRestController {
 	// 			.orElse(ResponseEntity.noContent().build());
 	// }
 
-	// @GetMapping("/{bookmarkId}")
-	// Bookmark readBookmark(@PathVariable String userId, @PathVariable Long bookmarkId) {
-	// 	this.validateUser(userId);
-		
-	// 	return this.bookmarkRepository
-	// 		.findById(bookmarkId)
-	// 		.orElseThrow(() -> new BookmarkNotFoundException(bookmarkId));
-	// }
+	@PutMapping("user/newuser")
+	ResponseEntity<?> addUser(@RequestBody User input) {
+		User newuser = new User(input.getFirstname(), input.getLastname(),input.getEmail());
+		this.userRepository.save(newuser);
+		return ResponseEntity.ok().build();
+	}
 
 	/**
 	 * Verify the {@literal userId} exists.
