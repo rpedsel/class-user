@@ -188,11 +188,30 @@ class EClassRestController {
 	// 			.orElse(ResponseEntity.noContent().build());
 	// }
 
-	@PutMapping("user/newuser")
+	@PutMapping("user/create")
 	ResponseEntity<?> addUser(@RequestBody User input) {
 		User newuser = new User(input.getFirstname(), input.getLastname(),input.getEmail());
 		this.userRepository.save(newuser);
 		return ResponseEntity.ok().build();
+	}
+
+	@PutMapping("class/create/{userId}")
+	ResponseEntity<?> addClass(@PathVariable Long userId, @RequestBody EClass input) {
+		this.validateUserId(userId);
+		return this.userRepository
+				.findById(userId)
+				.map(user -> {
+					EClass newclass = new EClass(user, input.getClassname());
+					this.eclassRepository.save(newclass);
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentRequest()
+					// 	.path("/{id}")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
+
+					return ResponseEntity.ok().build();
+				})
+				.orElse(ResponseEntity.noContent().build());
 	}
 
 	/**
