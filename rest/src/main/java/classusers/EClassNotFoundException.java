@@ -23,7 +23,7 @@ class EClassNotFoundException extends RuntimeException {
 	// public EClassNotFoundException(Long eclassId) {
 	// 	super("could not find eclass '" + eclassId + "'.");
 	// }
-	public EClassNotFoundException(String classname) {
-		super("could not find eclass '" + classname + "'.");
+	public EClassNotFoundException(Long classId) {
+		super("could not find eclass with id '" + classId + "'.");
 	}
 }

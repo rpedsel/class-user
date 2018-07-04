@@ -28,12 +28,12 @@ public class Application {
 					userRepository.save(creator);
 					EClass newclass = new EClass(creator, "A Class by "+lastname);
 					newclass.getStudents().add(creator);
-					//creator.getStudiedclasses().add(newclass);
+
 					eclassRepository.save(newclass);
 
 					EClass newclass2 = new EClass(creator, "B Class by "+lastname);
 					newclass2.getStudents().add(creator);
-					//creator.getStudiedclasses().add(newclass2);
+
 					eclassRepository.save(newclass2);
 
 					// Collection<User> testclass = userRepository.findStudiedclassesByLastname(lastname);

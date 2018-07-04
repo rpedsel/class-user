@@ -87,7 +87,7 @@ public class EClassRestControllerTest {
 
     @Test
     public void userNotFound() throws Exception {
-        mockMvc.perform(get("/user/apple/creator"))
+        mockMvc.perform(get("/user/33/creator"))
                 .andExpect(status().isNotFound());
     }
 

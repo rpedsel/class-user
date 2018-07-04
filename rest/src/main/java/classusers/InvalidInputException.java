@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 // tag::code[]
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class UserIdNotFoundException extends RuntimeException {
+class InvalidInputException extends RuntimeException {
 
-	public UserIdNotFoundException(Long userId) {
-		super("could not find user with id '" + userId + "'.");
+	public InvalidInputException(String field) {
+		super("invalid input field '" + field + "': null or empty.");
 	}
 }
 // end::code[]

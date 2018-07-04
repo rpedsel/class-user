@@ -19,7 +19,6 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    //private String username;
     @JsonView(View.General.class)
     private String firstname;
 
@@ -29,11 +28,8 @@ public class User {
     @JsonView(View.General.class)
     private String email;
 
-    //@JsonIgnore
-    //private String password;
 
-    //******* set to list? *******//
-    @JsonIgnore
+    //@JsonIgnore
     @OneToMany(mappedBy = "creator")
     private Set<EClass> eclasses = new HashSet<>();
 
