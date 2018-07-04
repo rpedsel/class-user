@@ -24,7 +24,7 @@ public class EClass {
     private String classname;
 
     //@JsonView(View.General.class)
-    @JsonIgnore
+    @JsonView(View.Class.class)
     @ManyToOne
     private User creator;
 

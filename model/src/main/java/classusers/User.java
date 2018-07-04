@@ -29,11 +29,11 @@ public class User {
     private String email;
 
 
-    //@JsonIgnore
+    @JsonView(View.User.class)
     @OneToMany(mappedBy = "creator")
-    private Set<EClass> eclasses = new HashSet<>();
+    private Set<EClass> createdclasses = new HashSet<>();
 
-    //@JsonIgnore
+    @JsonView(View.User.class)
     //@JsonView(View.General.class)
     @ManyToMany(cascade=CascadeType.MERGE, mappedBy = "students")
     private Set<EClass> studiedclasses = new HashSet<>();
@@ -78,12 +78,12 @@ public class User {
         this.email = email;
     }
 
-    public Set<EClass> getEClasses() {
-        return eclasses;
+    public Set<EClass> getCreatedClasses() {
+        return createdclasses;
     }
 
-    public void setEClasses(Set<EClass> eclasses) {
-        this.eclasses = eclasses;
+    public void setCreatedClasses(Set<EClass> createdclasses) {
+        this.createdclasses = createdclasses;
     }
 
     public Set<EClass> getStudiedclasses() {

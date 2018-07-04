@@ -7,7 +7,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByLastname(String lastname);
+    Collection<User> findByFirstname(String firstname);
+    Collection<User> findByLastname(String lastname);
+    Collection<User> findByEmail(String email);
     List<User> findAll();
-    //Collection<User> findStudiedclassesByLastname(String lastname);
 }

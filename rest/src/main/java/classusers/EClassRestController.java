@@ -56,12 +56,65 @@ class EClassRestController {
 		this.userRepository = userRepository;
 	}
 
+	// *******************Additional helper queries**********************
 	// get list of all users
 	@JsonView(View.General.class)
 	@GetMapping("/user/all")
 	Collection<User> readUserAll() {
 		return this.userRepository.findAll();
 	}
+
+	// get list of all classes
+	@JsonView(View.General.class)
+	@GetMapping("/class/all")
+	Collection<EClass> readClassAll() {
+		return this.eclassRepository.findAll();
+	}
+
+	// get User by userId (detailed profile)
+	@JsonView(View.User.class)
+	@GetMapping("/user/{userId}")
+	Optional<User> readIdUser(@PathVariable Long userId) {
+		this.validateUser(userId);
+		return this.userRepository.findById(userId);
+	}
+
+	// get EClass by classId (detailed profile)
+	@JsonView(View.Class.class)
+	@GetMapping("/class/{classId}")
+	Optional<EClass> readIdEClass(@PathVariable Long classId) {
+		this.validateEClass(classId);
+		return this.eclassRepository.findById(classId);
+	}
+
+	// search User by firstname
+	@JsonView(View.General.class)
+	@GetMapping("/user/search/firstname/{searchText}")
+	Collection<User> searchUserFirstname(@PathVariable String searchText) {
+		return this.userRepository.findByFirstname(searchText);
+	}
+
+	// search User by lastname
+	@JsonView(View.General.class)
+	@GetMapping("/user/search/lastname/{searchText}")
+	Collection<User> searchUserLastname(@PathVariable String searchText) {
+		return this.userRepository.findByLastname(searchText);
+	}
+
+	// search User by email
+	@JsonView(View.General.class)
+	@GetMapping("/user/search/email/{searchText}")
+	Collection<User> searchUserEmail(@PathVariable String searchText) {
+		return this.userRepository.findByEmail(searchText);
+	}
+
+	// search Class by classname
+	@JsonView(View.General.class)
+	@GetMapping("/class/search/classname/{searchText}")
+	Collection<EClass> searchClassname(@PathVariable String searchText) {
+		return this.eclassRepository.findByClassname(searchText);
+	}
+	// ******************************************************************
 
 	// get all classes that a user is a creator for
 	@JsonView(View.General.class)
@@ -142,7 +195,7 @@ class EClassRestController {
 				.orElse(ResponseEntity.noContent().build());
 	}
 
-	// update a student's first name, last name, and/or email
+	// update a user's first name, last name, and/or email
 	@PostMapping("/user/{userId}/update")
 	ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User input) {
 		this.validateUser(userId);
@@ -152,7 +205,7 @@ class EClassRestController {
 		boolean checkLastname = (input.getLastname() != null && !input.getLastname().isEmpty());
 		boolean checkEmail = (input.getEmail() != null && !input.getEmail().isEmpty());
 		Optional<User> opt = (!checkFirstname && !checkLastname && !checkEmail) ? Optional.empty() : Optional.of(input);
-		this.validateInput(opt, "all of firstname, lastname and email");
+		this.validateInput(opt, "ALL of firstname, lastname and email");
 	
 		return this.userRepository
 				.findById(userId)
@@ -179,6 +232,13 @@ class EClassRestController {
 	// create a User
 	@PutMapping("user/create")
 	ResponseEntity<?> addUser(@RequestBody User input) {
+		// validate input - all of three field exist and not empty string ""
+		boolean checkFirstname = (input.getFirstname() != null && !input.getFirstname().isEmpty());
+		boolean checkLastname = (input.getLastname() != null && !input.getLastname().isEmpty());
+		boolean checkEmail = (input.getEmail() != null && !input.getEmail().isEmpty());
+		Optional<User> opt = (!checkFirstname || !checkLastname || !checkEmail) ? Optional.empty() : Optional.of(input);
+		this.validateInput(opt, "at least ONE of firstname, lastname and email");
+
 		User newuser = new User(input.getFirstname(), input.getLastname(),input.getEmail());
 		User result = this.userRepository.save(newuser);
 
@@ -191,29 +251,39 @@ class EClassRestController {
 		return ResponseEntity.created(location).build();
 	}
 
+	// create a class (class name and creator user ID should be here by default)
 	@PutMapping("class/create/{userId}")
 	ResponseEntity<?> addClass(@PathVariable Long userId, @RequestBody EClass input) {
 		this.validateUser(userId);
+
+		// validate input class name: not null and not empty string ""
+		boolean check = (input.getClassname() != null && !input.getClassname().isEmpty());
+		Optional<String> opt = check ? Optional.of(input.getClassname()) : Optional.empty();
+		this.validateInput(opt, "classname");
+
 		return this.userRepository
 				.findById(userId)
 				.map(user -> {
 					EClass newclass = new EClass(user, input.getClassname());
-					this.eclassRepository.save(newclass);
-					// URI location = ServletUriComponentsBuilder
-					// 	.fromCurrentRequest()
-					// 	.path("/{id}")
-					// 	.buildAndExpand(result.getId())
-					// 	.toUri();
+					EClass result = this.eclassRepository.save(newclass);
+					
+					URI location = ServletUriComponentsBuilder
+						.fromCurrentContextPath()
+						.path("/class/{Id}")
+						.buildAndExpand(result.getId())
+						.toUri();
 
-					return ResponseEntity.ok().build();
+					return ResponseEntity.created(location).build();
 				})
 				.orElse(ResponseEntity.noContent().build());
 	}
 
 	/**
-	 * Verify the {@literal userId} exists.
+	 * Verify if valid value exists.
 	 *
 	 * @param userId
+	 * @param classId
+	 * @param value
 	 */
 
 	private void validateEClass(Long classId) {
