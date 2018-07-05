@@ -56,8 +56,8 @@ You can also find a working API from [this address](http://ec2-18-219-43-8.us-ea
 | **GET**  | /class/{classId}/students || Get all students user objects for the class |
 | **POST** | /class/{classId}/rename | {"classname": "New Class Name"}| Update a class name |
 | **POST** | /class/{classId}/addstudent | {"id": {userId}} | Add a student to the class |
-| **POST** | /user/{userId}/update | {"firstname": "Newfname", "lastname": "Newlname", "email": "newemail@example.com"}<br> *(all of the three)*| Update a student's first name, last name, and/or email |
-| **PUT**  | /user/create | {"firstname": "Alice", "lastname": "Abe", "email": "alice@example.com"} <br> *(at least one of the three)* | Create a User |
+| **POST** | /user/{userId}/update | {"firstname": "Newfname", "lastname": "Newlname", "email": "newemail@example.com"}<br> *(at least one of the three)*| Update a student's first name, last name, and/or email |
+| **PUT**  | /user/create | {"firstname": "Alice", "lastname": "Abe", "email": "alice@example.com"} <br> *(all of the three)* | Create a User |
 | **PUT**  | /class/create/{userId} | {"classname": "Math"} | Create a Class, take User with {userId} as creator |
 
 
