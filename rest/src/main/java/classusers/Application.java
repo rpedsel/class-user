@@ -22,29 +22,26 @@ public class Application {
 	CommandLineRunner init(UserRepository userRepository,
 						   EClassRepository eclassRepository) {
 		return args ->
-			Arrays.asList("jhoeller","dsyer","pwebb","ogierke","rwinch","mfisher","mpollack","jlong")
-				.forEach(lastname -> {
-					User creator = new User("Tom", lastname, "email@example.com");
+			// init five users into repository, each creates two classes and joins the classes he/she creates 
+			Arrays.asList("Amy Armstrong Art","Billy Brown Basketball","Chunya Chang Cooking","David Dawson Dancing","Erika Eto Ecommerce")
+				.forEach(name -> {
+					String[] splited = name.split(" ");
+					String firstname = splited[0];
+					String lastname = splited[1];
+					String classname = splited[2];
+					String email = firstname.toLowerCase()+lastname.substring(0,3).toLowerCase()+"@example.com";
+					
+					User creator = new User(firstname, lastname, email);
 					userRepository.save(creator);
-					EClass newclass = new EClass(creator, "A Class by "+lastname);
+					
+					EClass newclass = new EClass(creator, classname+" I");
 					newclass.getStudents().add(creator);
-
 					eclassRepository.save(newclass);
 
-					EClass newclass2 = new EClass(creator, "B Class by "+lastname);
+					EClass newclass2 = new EClass(creator, classname+" II");
 					newclass2.getStudents().add(creator);
-
 					eclassRepository.save(newclass2);
 
-					// Collection<User> testclass = userRepository.findStudiedclassesByLastname(lastname);
-					// out.println("********************************************************");
-					// out.println(testclass.iterator().next());
-					// out.println("********************************************************");
-					// Optional<EClass> testclass = eclassRepository.findByClassname(newclass.getClassname());
-					// out.println("********************************************************");
-					// out.println(newclass.getStudents().iterator().next().getLastname());
-					// out.println("********************************************************");
-					// out.println(testclass.get().getStudents().isEmpty());
 				});
 	}
 

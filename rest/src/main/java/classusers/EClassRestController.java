@@ -116,7 +116,7 @@ class EClassRestController {
 	}
 	// ******************************************************************
 
-	// get all classes that a user is a creator for
+	// GET-1 get all classes that a user is a creator for
 	@JsonView(View.General.class)
 	@GetMapping("/user/{userId}/creator")
 	Collection<EClass> readCreatorEClass(@PathVariable Long userId) {
@@ -124,7 +124,7 @@ class EClassRestController {
 		return this.eclassRepository.findByCreatorId(userId);
 	}
 
-	// get all classes that a user is a student for
+	// GET-2 get all classes that a user is a student for
 	@JsonView(View.General.class)
 	@GetMapping("/user/{userId}/student")
 	Collection<EClass> readStudentEClass(@PathVariable Long userId) {
@@ -132,7 +132,7 @@ class EClassRestController {
 		return this.userRepository.findById(userId).get().getStudiedclasses();
 	}
 
-	// get all students user objects for a class (this should return a list of students)
+	// GET-3 get all students user objects for a class (this should return a list of students)
 	@JsonView(View.Student.class)
 	@GetMapping("/class/{classId}/students")
 	Collection<User> readEClassStudent(@PathVariable Long classId) {
@@ -141,7 +141,7 @@ class EClassRestController {
 		return this.eclassRepository.findById(classId).get().getStudents();
 	}
 
-	// update a class name
+	// POST-1 update a class name
 	@PostMapping("/class/{classId}/rename")
 	ResponseEntity<?> renameClass(@PathVariable Long classId, @RequestBody EClass input) {
 		this.validateEClass(classId);
@@ -155,22 +155,23 @@ class EClassRestController {
 				.findById(classId)
 				.map(eclass -> {
 					eclass.setClassname(input.getClassname());
-					EClass result = this.eclassRepository.save(eclass);
+					this.eclassRepository.save(eclass);
+					//EClass result = this.eclassRepository.save(eclass);
 
-					URI location = ServletUriComponentsBuilder
-						.fromCurrentContextPath()
-					 	.path("/class/{Id}")
-						.buildAndExpand(result.getId())
-						.toUri();
-
-					return ResponseEntity.created(location).build();
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentContextPath()
+					//  	.path("/class/{Id}")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
+					return ResponseEntity.ok().build();
+					//return ResponseEntity.created(location).build();
 				})
 				.orElse(ResponseEntity.noContent().build());
 	}
 
-	// add a student to a class
+	// POST-2 add a student to a class
 	@PostMapping("/class/{classId}/addstudent")
-	ResponseEntity<?> renameClass(@PathVariable Long classId, @RequestBody User input) {
+	ResponseEntity<?> addClassStudent(@PathVariable Long classId, @RequestBody User input) {
 		this.validateEClass(classId);
 		this.validateUser(input.getId());
 		
@@ -181,21 +182,22 @@ class EClassRestController {
 					Set<User> newstudents = eclass.getStudents();
 					newstudents.add(student);
 					eclass.setStudents(newstudents);
-					
-					EClass result = this.eclassRepository.save(eclass);
+					this.eclassRepository.save(eclass);
+					// EClass result = this.eclassRepository.save(eclass);
 
-					URI location = ServletUriComponentsBuilder
-						.fromCurrentContextPath()
-						.path("/class/{Id}/students")
-						.buildAndExpand(result.getId())
-						.toUri();
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentContextPath()
+					// 	.path("/class/{Id}/students")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
 
-					return ResponseEntity.created(location).build();
+					return ResponseEntity.ok().build();
+					//return ResponseEntity.created(location).build();
 				})
 				.orElse(ResponseEntity.noContent().build());
 	}
 
-	// update a user's first name, last name, and/or email
+	// POST-3 update a user's first name, last name, and/or email
 	@PostMapping("/user/{userId}/update")
 	ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User input) {
 		this.validateUser(userId);
@@ -216,20 +218,22 @@ class EClassRestController {
 						user.setLastname(input.getLastname());
 					if (checkEmail)
 						user.setEmail(input.getEmail());
-					User result = this.userRepository.save(user);
+					this.userRepository.save(user);
+					// User result = this.userRepository.save(user);
 
-					URI location = ServletUriComponentsBuilder
-						.fromCurrentContextPath()
-						.path("/user/{Id}")
-						.buildAndExpand(result.getId())
-						.toUri();
+					// URI location = ServletUriComponentsBuilder
+					// 	.fromCurrentContextPath()
+					// 	.path("/user/{Id}")
+					// 	.buildAndExpand(result.getId())
+					// 	.toUri();
 
-					return ResponseEntity.created(location).build();
+					return ResponseEntity.ok().build();
+					// return ResponseEntity.created(location).build();
 				})
 				.orElse(ResponseEntity.noContent().build());
 	}
 
-	// create a User
+	// PUT-1 create a User
 	@PutMapping("user/create")
 	ResponseEntity<?> addUser(@RequestBody User input) {
 		// validate input - all of three field exist and not empty string ""
@@ -251,7 +255,7 @@ class EClassRestController {
 		return ResponseEntity.created(location).build();
 	}
 
-	// create a class (class name and creator user ID should be here by default)
+	// PUT-2 create a class (class name and creator user ID should be here by default)
 	@PutMapping("class/create/{userId}")
 	ResponseEntity<?> addClass(@PathVariable Long userId, @RequestBody EClass input) {
 		this.validateUser(userId);

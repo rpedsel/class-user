@@ -15,14 +15,16 @@
  */
 package classusers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 /**
+ * author of spring boot REST tutorial (https://spring.io/guides/tutorials/bookmarks/)
  * @author Greg Turnquist
+ *
+ * @author I-Hui Huang
  */
+ @ResponseStatus(HttpStatus.NOT_FOUND)
 class EClassNotFoundException extends RuntimeException {
-
-	// public EClassNotFoundException(Long eclassId) {
-	// 	super("could not find eclass '" + eclassId + "'.");
-	// }
 	public EClassNotFoundException(Long classId) {
 		super("could not find eclass with id '" + classId + "'.");
 	}

@@ -27,14 +27,21 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import org.junit.runners.MethodSorters;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+
 /**
+ * author of spring boot REST tutorial (https://spring.io/guides/tutorials/bookmarks/)
  * @author Josh Long
+ *
+ * @author I-Hui Huang
  */
+@FixMethodOrder
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public class EClassRestControllerTest {
-
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -42,9 +49,9 @@ public class EClassRestControllerTest {
 
     private MockMvc mockMvc;
 
-    private String firstName = "myfirstname";
-
-    private String lastName = "bdussault";
+    private String firstName = "Testy";
+    private String lastName = "Terriby";
+    private String email = "testyter@example.com";
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
@@ -80,65 +87,163 @@ public class EClassRestControllerTest {
         this.eclassRepository.deleteAllInBatch();
         this.userRepository.deleteAllInBatch();
 
-        this.user = userRepository.save(new User(firstName, lastName, "email@test.com"));
-        this.eclassList.add(eclassRepository.save(new EClass(user, "A class by "+lastName)));
-        this.eclassList.add(eclassRepository.save(new EClass(user, "B class by "+lastName)));
+        // add one user
+        this.user = userRepository.save(new User(firstName, lastName, email));
+        // add two eclasses, add user as student to first class
+        EClass eclass1 = eclassRepository.save(new EClass(user, "Test Class I"));
+        EClass eclass2 = eclassRepository.save(new EClass(user, "Test Class II"));
+        eclass1.getStudents().add(user);
+        eclassRepository.save(eclass1);
+        this.eclassList.add(eclass1);
+        this.eclassList.add(eclass2);
     }
 
+    // test GET-1 normal
+    @Test
+    public void readCreatorEClassNormal() throws Exception {
+        mockMvc.perform(get("/user/" + this.user.getId() + "/creator"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].id", is(this.eclassList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].classname", is("Test Class I")))
+                .andExpect(jsonPath("$[1].id", is(this.eclassList.get(1).getId().intValue())))
+                .andExpect(jsonPath("$[1].classname", is("Test Class II")));
+    }
+    
+    // test GET-1 user not found
     @Test
     public void userNotFound() throws Exception {
         mockMvc.perform(get("/user/33/creator"))
                 .andExpect(status().isNotFound());
     }
 
-    // @Test
-    // public void userNotFound() throws Exception {
-    //     mockMvc.perform(post("/george/bookmarks/")
-    //             .content(this.json(new Bookmark(null, null, null)))
-    //             .contentType(contentType))
-    //             .andExpect(status().isNotFound());
-    // }
+    // test GET-2 normal
+    @Test
+    public void readStudentEClassNormal() throws Exception {
+        mockMvc.perform(get("/user/" + this.user.getId() + "/student"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].id", is(this.eclassList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].classname", is("Test Class I")));
+    }
 
-    // @Test
-    // public void readSingleBookmark() throws Exception {
-    //     mockMvc.perform(get("/bookmarks/" + lastName + "/" + this.bookmarkList.get(0).getId()))
-    //             .andExpect(status().isOk())
-    //             .andExpect(content().contentType(contentType))
-    //             .andExpect(jsonPath("$.id", is(this.bookmarkList.get(0).getId().intValue())))
-    //             .andExpect(jsonPath("$.uri", is("http://bookmark.com/1/" + lastName)))
-    //             .andExpect(jsonPath("$.description", is("A description")));
-    // }
+    // test GET-3 normal
+    @Test
+    public void readEClassStudentNormal() throws Exception {
+        mockMvc.perform(get("/class/" + this.eclassList.get(0).getId() + "/students"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].id", is(this.user.getId().intValue())))
+                .andExpect(jsonPath("$[0].firstname", is("Testy")))
+                .andExpect(jsonPath("$[0].lastname", is("Terriby")))
+                .andExpect(jsonPath("$[0].email", is("testyter@example.com")));
+    }
 
-    // @Test
-    // public void readBookmarks() throws Exception {
-    //     mockMvc.perform(get("/bookmarks/" + lastName))
-    //             .andDo(print())
-    //             .andExpect(status().isOk())
-    //             .andExpect(content().contentType(contentType))
-    //             .andExpect(jsonPath("$", hasSize(2)))
-    //             .andExpect(jsonPath("$[0].id", is(this.bookmarkList.get(0).getId().intValue())))
-    //             .andExpect(jsonPath("$[0].uri", is("http://bookmark.com/1/" + lastName)))
-    //             .andExpect(jsonPath("$[0].description", is("A description")))
-    //             .andExpect(jsonPath("$[1].id", is(this.bookmarkList.get(1).getId().intValue())))
-    //             .andExpect(jsonPath("$[1].uri", is("http://bookmark.com/2/" + lastName)))
-    //             .andExpect(jsonPath("$[1].description", is("A description")));
-    // }
+    // test GET-3 class not found
+    @Test
+    public void classNotFound() throws Exception {
+        mockMvc.perform(get("/class/1111/students"))
+                .andExpect(status().isNotFound());
+    }
 
-    // @Test
-    // public void createBookmark() throws Exception {
-    //     String bookmarkJson = json(new Bookmark(
-    //             this.user, "http://spring.io", "a bookmark to the best resource for Spring news and information"));
+    // test POST-1 normal
+    @Test
+    public void renameClassNormal() throws Exception {
+        String renameClassJson = json(new EClass(null, "Renamed Class I"));
+        this.mockMvc.perform(post("/class/" + this.eclassList.get(0).getId() + "/rename")
+                .contentType(contentType)
+                .content(renameClassJson))
+                .andExpect(status().isOk());
+    }
 
-    //     this.mockMvc.perform(post("/bookmarks/" + lastName)
-    //             .contentType(contentType)
-    //             .content(bookmarkJson))
-    //             .andExpect(status().isCreated());
-    // }
+    // test POST-1 invalid input - (empty new classname)
+    // 422 HttpStatus.UNPROCESSABLE_ENTITY
+    @Test
+    public void invalidInput() throws Exception {
+        String renameClassJson = json(new EClass(null, ""));
+        this.mockMvc.perform(post("/class/" + this.eclassList.get(0).getId() + "/rename")
+                .contentType(contentType)
+                .content(renameClassJson))
+                .andExpect(status().isUnprocessableEntity());
+    }
 
-    // protected String json(Object o) throws IOException {
-    //     MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-    //     this.mappingJackson2HttpMessageConverter.write(
-    //             o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-    //     return mockHttpOutputMessage.getBodyAsString();
-    // }
+    // test POST-2 normal
+    // add user to second class
+    @Test
+    public void addClassStudentNormal() throws Exception {
+        String addClassStudentJson = "{\"id\":" + this.user.getId() + "}";
+        this.mockMvc.perform(post("/class/" + this.eclassList.get(1).getId() + "/addstudent")
+                .contentType(contentType)
+                .content(addClassStudentJson))
+                .andExpect(status().isOk());
+    }
+
+    // test POST-3 normal
+    // update firstname of user
+    @Test
+    public void updateUserNormal() throws Exception {
+        String updateUserJson = "{\"firstname\":\"Tilda\"}";
+        this.mockMvc.perform(post("/user/" + this.user.getId() + "/update")
+                .contentType(contentType)
+                .content(updateUserJson))
+                .andExpect(status().isOk());
+        this.checkUpdateNormal();
+    }
+    // check if user is really updated and last name, email not affected
+    public void checkUpdateNormal() throws Exception {
+        mockMvc.perform(get("/user/" + this.user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$.firstname", is("Tilda")))
+                .andExpect(jsonPath("$.lastname", is("Terriby")))
+                .andExpect(jsonPath("$.email", is("testyter@example.com")));
+    }
+
+    // test PUT-1 normal
+    // create user 2
+    @Test
+    public void addUserNormal() throws Exception {
+        String addUserJson = json(new User("Monica", "Mo", "monicamoo@example.com"));
+        this.mockMvc.perform(put("/user/create")
+                .contentType(contentType)
+                .content(addUserJson))
+                .andExpect(status().isCreated());
+        this.checkAddUserNormal();
+    }
+    // check if user is really updated and last name, email not affected
+    public void checkAddUserNormal() throws Exception {
+        mockMvc.perform(get("/user/search/lastname/Mo"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].firstname", is("Monica")))
+                .andExpect(jsonPath("$[0].lastname", is("Mo")))
+                .andExpect(jsonPath("$[0].email", is("monicamoo@example.com")));
+    }
+
+    // test PUT-2 normal
+    // create class 3
+    @Test
+    public void addClassNormal() throws Exception {
+        String addClassJson = "{\"classname\":\"The New Class\"}";;
+        this.mockMvc.perform(put("/class/create/" + this.user.getId())
+                .contentType(contentType)
+                .content(addClassJson))
+                .andExpect(status().isCreated());
+        this.checkAddClassNormal();
+    }
+    // check if user is really updated and last name, email not affected
+    public void checkAddClassNormal() throws Exception {
+        mockMvc.perform(get("/class/search/classname/The New Class"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].classname", is("The New Class")));
+    }
+    
+
+    protected String json(Object o) throws IOException {
+        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+        this.mappingJackson2HttpMessageConverter.write(
+                o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+        return mockHttpOutputMessage.getBodyAsString();
+    }
 }

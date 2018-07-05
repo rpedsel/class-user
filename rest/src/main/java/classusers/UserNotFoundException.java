@@ -19,7 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
+ * author of spring boot REST tutorial (https://spring.io/guides/tutorials/bookmarks/)
  * @author Greg Turnquist
+ *
+ * @author I-Hui Huang
  */
 // tag::code[]
 @ResponseStatus(HttpStatus.NOT_FOUND)

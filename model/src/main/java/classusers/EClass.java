@@ -23,7 +23,6 @@ public class EClass {
     @JsonView(View.General.class)
     private String classname;
 
-    //@JsonView(View.General.class)
     @JsonView(View.Class.class)
     @ManyToOne
     private User creator;
@@ -32,9 +31,7 @@ public class EClass {
     @ManyToMany(cascade=CascadeType.MERGE)
     private Set<User> students = new HashSet<>();
 
-    //private String description;
-
-    private EClass() { } // JPA only
+    private EClass() { } 
 
     public EClass(User creator, String classname) {    
         this.creator = creator;

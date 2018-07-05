@@ -34,11 +34,10 @@ public class User {
     private Set<EClass> createdclasses = new HashSet<>();
 
     @JsonView(View.User.class)
-    //@JsonView(View.General.class)
     @ManyToMany(cascade=CascadeType.MERGE, mappedBy = "students")
     private Set<EClass> studiedclasses = new HashSet<>();
 
-    private User() { } // JPA only
+    private User() { } 
 
     public User(String firstname, String lastname, String email) {
         this.firstname = firstname;
