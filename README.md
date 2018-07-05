@@ -39,7 +39,12 @@ You can also find a working API from [this address](http://ec2-18-219-43-8.us-ea
 >*There is nothing on the root path above, try append **/user/all** to see a list of all users.*
 
 ## API Documentation
- ##### Header Content-type: **application/json**
+
+### Default, Predefined Objects 
+There are several User and EClass Objects predefined in the application. Check them out with **GET /user/all**, **GET class/all**, and look up details of an object with **GET user/{userId}**, **GET /class/{classId}**.
+
+### List of Requests
+##### Header Content-type: **application/json**
 
 | Type | Request       | Post Data | Description    |
 | ---- | ------------- |--- | -------------    |
@@ -60,5 +65,11 @@ You can also find a working API from [this address](http://ec2-18-219-43-8.us-ea
 | **PUT**  | /user/create | {"firstname": "Alice", "lastname": "Abe", "email": "alice@example.com"} <br> *(all of the three)* | Create a User |
 | **PUT**  | /class/create/{userId} | {"classname": "Math"} | Create a Class, take User with {userId} as creator |
 
+## Testing the Application
 
+### Unit Tests
+There are eleven [test cases](https://github.com/rpedsel/class-user/blob/master/rest/src/test/java/classusers/EClassRestControllerTest.java) run while building the project, to make sure that basic functionalities are working. 
+
+### API Tester Result
+Test result with API Tester: [Educational Class-User API Test Result](https://apitester.com/shared/runs/5ed4ad99300c41a69af8dbc7f5c1d4f8)
 
