@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Java Development Kit
+* Java Development Kit (I am using **Oracle Java 8**)
 * Maven
 
 
@@ -68,8 +68,51 @@ There are several User and EClass Objects predefined in the application. Check t
 ## Testing the Application
 
 ### Unit Tests
-There are eleven [test cases](https://github.com/rpedsel/class-user/blob/master/rest/src/test/java/classusers/EClassRestControllerTest.java) run while building the project, to make sure that basic functionalities are working. 
+There are 11 [test cases](https://github.com/rpedsel/class-user/blob/master/rest/src/test/java/classusers/EClassRestControllerTest.java) run while building the project, to make sure that basic functionalities are working. 
 
 ### API Tester Result
-Test result with API Tester: [Educational Class-User API Test Result](https://apitester.com/shared/runs/5ed4ad99300c41a69af8dbc7f5c1d4f8)
+Test result of 15 requests with API Tester: [Educational Class-User API Test Result](https://apitester.com/shared/runs/5ed4ad99300c41a69af8dbc7f5c1d4f8) 
 
+(To see details of all steps, please find step selector on top-right of the page, *Viewing a Request Step*)
+
+### Test with CURL
+```bash
+# GET
+curl localhost:8080/user/all
+```
+
+```bash
+# POST
+curl -d "{\"classname\": \"New Name\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/class/1/rename
+```
+```bash
+# POST
+curl -d "{\"classname\": \"New Class Name\"}" -H "Content-Type: application/json" -X PUT http://localhost:8080/class/create/1
+```
+
+### Time Complexity
+M = # of record for User
+
+N = # of record for EClass
+
+| Type | Request       | Explanation | Time Complexity |
+| ---- | ------------- | ----------- |---------------- |
+| **GET**  | /user/{userId}/creator | Find eclass with creatorId = {userId} | O(N) |
+| **GET**  | /user/{userId}/student | Join eclass_students & eclass table on studiedclassesId = eclassId, find those whose studentId = {userId} | O(MN) |
+| **GET**  | /class/{classId}/students |1. Find eclass with {classId} <br> 2. Find all records in eclass_students where studiedclasses_id = {classId}| O(M) |
+| **POST** | /class/{classId}/rename | 1. Find eclass with {classId} <br> 2. set new classname for the eclass | O(1) |
+| **POST** | /class/{classId}/addstudent  | 1. Find eclass with {classId} <br> 2. Find user with {userId} <br> 3. Find students in eclass_students table that studies eclass with {classId} <br> 4. Insert new record into eclass_students | O(M) |
+| **POST** | /user/{userId}/update | Update user with new value(s) | O(1) |
+| **PUT**  | /user/create | Insert into user table | O(1) |
+| **PUT**  | /class/create/{userId} | 1. Find user with {userId} <br> 2. Insert new record into eclass table | O(1) |
+
+##### Debugging 
+Add *logging.level.org.hibernate.SQL=debug* in model/target/classes/application.properties
+
+##### Possible Improvement
+[Hibernate Many-To-Many Revisited](https://josephmarques.wordpress.com/2010/02/22/many-to-many-revisited/)
+
+## Dependencies ([Spring Initializr](https://start.spring.io))
+* Web
+* H2 Database
+* JPA (Provider: Hibernate)
