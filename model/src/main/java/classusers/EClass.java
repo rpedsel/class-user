@@ -71,7 +71,7 @@ public class EClass {
         return students;
     }
 
-    public void setStudents(Set<User> students) {
-        this.students = students;
+    public void addStudent(User student) {
+        this.students.add(student);
     }
 }

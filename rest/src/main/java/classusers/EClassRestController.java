@@ -162,15 +162,8 @@ class EClassRestController {
 				.map(eclass -> {
 					eclass.setClassname(input.getClassname());
 					this.eclassRepository.save(eclass);
-					//EClass result = this.eclassRepository.save(eclass);
 
-					// URI location = ServletUriComponentsBuilder
-					// 	.fromCurrentContextPath()
-					//  	.path("/class/{Id}")
-					// 	.buildAndExpand(result.getId())
-					// 	.toUri();
 					return ResponseEntity.ok().build();
-					//return ResponseEntity.created(location).build();
 				})
 				.orElse(ResponseEntity.noContent().build());
 	}
@@ -185,20 +178,12 @@ class EClassRestController {
 				.findById(classId)
 				.map(eclass -> {
 					User student = this.userRepository.findById(input.getId()).get();
-					Set<User> newstudents = eclass.getStudents();
-					newstudents.add(student);
-					eclass.setStudents(newstudents);
+					//Set<User> newstudents = eclass.getStudents();
+					//newstudents.add(student);
+					eclass.addStudent(student);
 					this.eclassRepository.save(eclass);
-					// EClass result = this.eclassRepository.save(eclass);
-
-					// URI location = ServletUriComponentsBuilder
-					// 	.fromCurrentContextPath()
-					// 	.path("/class/{Id}/students")
-					// 	.buildAndExpand(result.getId())
-					// 	.toUri();
 
 					return ResponseEntity.ok().build();
-					//return ResponseEntity.created(location).build();
 				})
 				.orElse(ResponseEntity.noContent().build());
 	}
@@ -225,13 +210,6 @@ class EClassRestController {
 					if (checkEmail)
 						user.setEmail(input.getEmail());
 					this.userRepository.save(user);
-					// User result = this.userRepository.save(user);
-
-					// URI location = ServletUriComponentsBuilder
-					// 	.fromCurrentContextPath()
-					// 	.path("/user/{Id}")
-					// 	.buildAndExpand(result.getId())
-					// 	.toUri();
 
 					return ResponseEntity.ok().build();
 					// return ResponseEntity.created(location).build();
