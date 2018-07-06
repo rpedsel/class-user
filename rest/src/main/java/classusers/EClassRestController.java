@@ -57,6 +57,12 @@ class EClassRestController {
 	}
 
 	// *******************Additional helper queries**********************
+	// welcome page
+	@GetMapping("/")
+	String welcome() {
+		return "There is nothing on this page, try append /user/all to see a list of all users. API document @ https://github.com/rpedsel/class-user";
+	}
+
 	// get list of all users
 	@JsonView(View.General.class)
 	@GetMapping("/user/all")

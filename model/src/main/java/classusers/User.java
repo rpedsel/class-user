@@ -34,7 +34,7 @@ public class User {
     private Set<EClass> createdclasses = new HashSet<>();
 
     @JsonView(View.User.class)
-    @ManyToMany(cascade=CascadeType.MERGE, mappedBy = "students")
+    @ManyToMany(cascade=CascadeType.MERGE, fetch=FetchType.LAZY, mappedBy = "students")
     private Set<EClass> studiedclasses = new HashSet<>();
 
     private User() { } 
