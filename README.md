@@ -90,7 +90,7 @@ curl -d "{\"classname\": \"New Name\"}" -H "Content-Type: application/json" -X P
 curl -d "{\"classname\": \"New Class Name\"}" -H "Content-Type: application/json" -X PUT http://localhost:8080/class/create/1
 ```
 
-### Time Complexity
+## Time Complexity
 M = # of record for User
 
 N = # of record for EClass
