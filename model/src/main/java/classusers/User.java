@@ -33,6 +33,7 @@ public class User {
     @OneToMany(mappedBy = "creator")
     private Set<EClass> createdclasses = new HashSet<>();
 
+
     @JsonView(View.User.class)
     @ManyToMany(cascade=CascadeType.MERGE, fetch=FetchType.LAZY, mappedBy = "students")
     private Set<EClass> studiedclasses = new HashSet<>();

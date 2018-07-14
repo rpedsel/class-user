@@ -20,7 +20,7 @@ public class EClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonView(View.General.class)
+    @JsonView(View.Class.class)
     private String classname;
 
     @JsonView(View.Class.class)

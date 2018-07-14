@@ -127,7 +127,8 @@ class EClassRestController {
 	@GetMapping("/user/{userId}/creator")
 	Collection<EClass> readCreatorEClass(@PathVariable Long userId) {
 		this.validateUser(userId);
-		return this.eclassRepository.findByCreatorId(userId);
+		//return this.eclassRepository.findByCreatorId(userId);
+		return this.userRepository.findById(userId).get().getCreatedClasses();
 	}
 
 	// GET-2 get all classes that a user is a student for
@@ -136,6 +137,7 @@ class EClassRestController {
 	Collection<EClass> readStudentEClass(@PathVariable Long userId) {
 		this.validateUser(userId);
 		return this.userRepository.findById(userId).get().getStudiedclasses();
+		//return this.eclassRepository.findByStudentsId(userId);
 	}
 
 	// GET-3 get all students user objects for a class (this should return a list of students)
