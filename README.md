@@ -97,10 +97,10 @@ N = # of record for EClass
 
 | Type | Request       | Explanation | Time Complexity |
 | ---- | ------------- | ----------- |---------------- |
-| **GET**  | /user/{userId}/creator | Find eclass with creatorId = {userId} | O(N) |
-| **GET**  | /user/{userId}/student | Join eclass_students & eclass table on studiedclassesId = eclassId, find those whose studentId = {userId} | O(MN) |
-| **GET**  | /class/{classId}/students |1. Find eclass with {classId} <br> 2. Find all records in eclass_students where studiedclasses_id = {classId}| O(M) |
-| **POST** | /class/{classId}/rename | 1. Find eclass with {classId} <br> 2. set new classname for the eclass | O(1) |
+| **GET**  | /user/{userId}/creator | Find eclass with creatorId = {userId} | ~~O(N)~~ <br> O(N log M) <br> **new:**<br> **O(log N)** |
+| **GET**  | /user/{userId}/student | Join eclass_students & eclass table on studiedclassesId = eclassId, find those whose studentId = {userId} | ~~O(MN)~~ <br> O(N logMN) <br> **new:** <br> **O(log M + N log N)**  |
+| **GET**  | /class/{classId}/students |1. Find eclass with {classId} <br> 2. Find all records in eclass_students where studiedclasses_id = {classId}| ~~O(M)~~ <br> O(log N + <br> M log M) |
+| **POST** | /class/{classId}/rename | 1. Find eclass with {classId} <br> 2. set new classname for the eclass | ~~O(1)~~ <br> O(log N) |
 | **POST** | /class/{classId}/addstudent  | 1. Find eclass with {classId} <br> 2. Find user with {userId} <br> 3. Find students in eclass_students table that studies eclass with {classId} <br> 4. Insert new record into eclass_students | O(M) |
 | **POST** | /user/{userId}/update | Update user with new value(s) | O(1) |
 | **PUT**  | /user/create | Insert into user table | O(1) |
