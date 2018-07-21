@@ -86,7 +86,7 @@ curl localhost:8080/user/all
 curl -d "{\"classname\": \"New Name\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/class/1/rename
 ```
 ```bash
-# POST
+# PUT
 curl -d "{\"classname\": \"New Class Name\"}" -H "Content-Type: application/json" -X PUT http://localhost:8080/class/create/1
 ```
 
